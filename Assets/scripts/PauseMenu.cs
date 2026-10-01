@@ -34,6 +34,7 @@ public class PauseMenu : MonoBehaviour
         if (panelPausa == null)
             return;
 
+        AudioManager.Instance.PlayButton();
         panelPausa.SetActive(true);
         Time.timeScale = 0f;
         EnPausa = true;
@@ -47,6 +48,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Reanudar()
     {
+        AudioManager.Instance.PlayButton();
         if (panelPausa != null)
             panelPausa.SetActive(false);
         Time.timeScale = 1f;
@@ -55,6 +57,7 @@ public class PauseMenu : MonoBehaviour
 
     public void IrAlMenu()
     {
+        AudioManager.Instance.PlayButton();
         // Siempre restaurar el tiempo antes de cambiar de escena
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");

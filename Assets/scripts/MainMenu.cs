@@ -10,11 +10,13 @@ public class MainMenu : MonoBehaviour
 
     public void Jugar()
     {
+        AudioManager.Instance.PlayButton();
         SceneManager.LoadScene("Level_01");
     }
 
     public void Salir()
     {
+        AudioManager.Instance.PlayButton();
         Application.Quit();
     }
 }

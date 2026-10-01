@@ -30,6 +30,8 @@ public class PointPickup : MonoBehaviour
         if (UIManager.Instance != null)
             UIManager.Instance.SumarPuntos(valor);
 
+        AudioManager.Instance.PlayCoin();
+
         Destroy(gameObject);
     }
 }
