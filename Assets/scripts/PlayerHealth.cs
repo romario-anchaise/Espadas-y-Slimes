@@ -8,9 +8,11 @@ public class PlayerHealth : MonoBehaviour
 
     public int VidaActual => vida;
     public int VidaMaxima => vidaMaxima;
+    public bool IsDead => vida <= 0;
 
     public event Action<int, int> HealthChanged;
     public event Action Damaged;
+    public event Action Died;
 
     void Start()
     {
@@ -20,6 +22,9 @@ public class PlayerHealth : MonoBehaviour
 
     public void RecibirDanio(int cantidad)
     {
+        if (cantidad <= 0 || IsDead)
+            return;
+
         int vidaAnterior = vida;
 
         vida = Mathf.Max(0, vida - cantidad);
@@ -28,6 +33,9 @@ public class PlayerHealth : MonoBehaviour
         {
             HealthChanged?.Invoke(vida, vidaMaxima);
             Damaged?.Invoke();
+
+            if (IsDead)
+                Died?.Invoke();
         }
     }
 }

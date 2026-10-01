@@ -13,6 +13,7 @@ public class PlayerAnimationController : MonoBehaviour
     private bool m_hasJump;
     private bool m_hasAttack;
     private bool m_hasHurt;
+    private bool m_hasDeath;
 
     private void Awake()
     {
@@ -30,7 +31,10 @@ public class PlayerAnimationController : MonoBehaviour
         if (m_combat != null)
             m_combat.Attacked += PlayAttackAnimation;
         if (m_health != null)
+        {
             m_health.Damaged += PlayHurtAnimation;
+            m_health.Died += PlayDeathAnimation;
+        }
     }
 
     private void OnDisable()
@@ -40,7 +44,10 @@ public class PlayerAnimationController : MonoBehaviour
         if (m_combat != null)
             m_combat.Attacked -= PlayAttackAnimation;
         if (m_health != null)
+        {
             m_health.Damaged -= PlayHurtAnimation;
+            m_health.Died -= PlayDeathAnimation;
+        }
     }
 
     private void PlayAttackAnimation()
@@ -53,6 +60,12 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (m_animator != null && m_hasHurt)
             m_animator.SetTrigger("Hurt");
+    }
+
+    private void PlayDeathAnimation()
+    {
+        if (m_animator != null && m_hasDeath)
+            m_animator.SetTrigger("Death");
     }
 
     private void Update()
@@ -98,6 +111,8 @@ public class PlayerAnimationController : MonoBehaviour
                 m_hasAttack = true;
             else if (parameter.name == "Hurt" && parameter.type == AnimatorControllerParameterType.Trigger)
                 m_hasHurt = true;
+            else if (parameter.name == "Death" && parameter.type == AnimatorControllerParameterType.Trigger)
+                m_hasDeath = true;
         }
     }
 }
