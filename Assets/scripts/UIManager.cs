@@ -15,6 +15,7 @@ public class UIManager : MonoBehaviour
     int puntos;
     Coroutine rutinaDanio;
     Coroutine rutinaPuntos;
+    PlayerHealth playerHealth;
 
     void Awake()
     {
@@ -26,13 +27,44 @@ public class UIManager : MonoBehaviour
         Instance = this;
     }
 
+    void OnEnable()
+    {
+        playerHealth = FindFirstObjectByType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.HealthChanged += ActualizarVida;
+            playerHealth.Damaged += FlashDanio;
+        }
+
+        ScoreManager.Instance.ScoreChanged += ActualizarPuntos;
+        ScoreManager.Instance.PointsAdded += MostrarPuntosGanados;
+    }
+
     void Start()
     {
-        ActualizarPuntos(0);
+        if (playerHealth != null)
+            ActualizarVida(playerHealth.VidaActual, playerHealth.VidaMaxima);
+
+        ActualizarPuntos(ScoreManager.Instance.CurrentScore);
         if (overlayDanio != null)
             overlayDanio.color = new Color(1f, 0f, 0f, 0f);
         if (avisoPuntos != null)
             avisoPuntos.color = new Color(1f, 0.82f, 0.2f, 0f);
+    }
+
+    void OnDisable()
+    {
+        if (playerHealth != null)
+        {
+            playerHealth.HealthChanged -= ActualizarVida;
+            playerHealth.Damaged -= FlashDanio;
+        }
+
+        if (ScoreManager.TryGetInstance(out ScoreManager scoreManager))
+        {
+            scoreManager.ScoreChanged -= ActualizarPuntos;
+            scoreManager.PointsAdded -= MostrarPuntosGanados;
+        }
     }
 
     public void ActualizarVida(int actual, int max)
@@ -50,12 +82,10 @@ public class UIManager : MonoBehaviour
             textoPuntos.text = this.puntos.ToString("D4");
     }
 
-    public void SumarPuntos(int cantidad)
+    void MostrarPuntosGanados(int cantidad)
     {
         if (cantidad <= 0)
             return;
-
-        ActualizarPuntos(puntos + cantidad);
 
         if (rutinaPuntos != null)
             StopCoroutine(rutinaPuntos);

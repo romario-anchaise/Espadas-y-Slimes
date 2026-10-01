@@ -4,15 +4,21 @@ using UnityEngine;
 public class PlayerAnimationController : MonoBehaviour
 {
     private PlayerMovement m_movement;
+    private PlayerCombat m_combat;
+    private PlayerHealth m_health;
     private Animator m_animator;
     private bool m_hasAnimState;
     private bool m_hasGrounded;
     private bool m_hasAirSpeed;
     private bool m_hasJump;
+    private bool m_hasAttack;
+    private bool m_hasHurt;
 
     private void Awake()
     {
         m_movement = GetComponent<PlayerMovement>();
+        m_combat = GetComponent<PlayerCombat>();
+        m_health = GetComponent<PlayerHealth>();
         m_animator = GetComponent<Animator>();
         FindAnimatorParameters();
     }
@@ -21,12 +27,32 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (m_movement != null)
             m_movement.Jumped += PlayJumpAnimation;
+        if (m_combat != null)
+            m_combat.Attacked += PlayAttackAnimation;
+        if (m_health != null)
+            m_health.Damaged += PlayHurtAnimation;
     }
 
     private void OnDisable()
     {
         if (m_movement != null)
             m_movement.Jumped -= PlayJumpAnimation;
+        if (m_combat != null)
+            m_combat.Attacked -= PlayAttackAnimation;
+        if (m_health != null)
+            m_health.Damaged -= PlayHurtAnimation;
+    }
+
+    private void PlayAttackAnimation()
+    {
+        if (m_animator != null && m_hasAttack)
+            m_animator.SetTrigger("Attack");
+    }
+
+    private void PlayHurtAnimation()
+    {
+        if (m_animator != null && m_hasHurt)
+            m_animator.SetTrigger("Hurt");
     }
 
     private void Update()
@@ -68,6 +94,10 @@ public class PlayerAnimationController : MonoBehaviour
                 m_hasAirSpeed = true;
             else if (parameter.name == "Jump" && parameter.type == AnimatorControllerParameterType.Trigger)
                 m_hasJump = true;
+            else if (parameter.name == "Attack" && parameter.type == AnimatorControllerParameterType.Trigger)
+                m_hasAttack = true;
+            else if (parameter.name == "Hurt" && parameter.type == AnimatorControllerParameterType.Trigger)
+                m_hasHurt = true;
         }
     }
 }

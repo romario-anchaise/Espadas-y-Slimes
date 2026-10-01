@@ -27,9 +27,8 @@ public class PointPickup : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        if (UIManager.Instance != null)
-            UIManager.Instance.SumarPuntos(valor);
-
+        ScoreManager.Instance.AddPoints(valor);
+        ParticleEffects.PlayCoin(transform.position);
         AudioManager.Instance.PlayCoin();
 
         Destroy(gameObject);
